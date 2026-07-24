@@ -51,10 +51,6 @@ These are the only colors to use. Do not introduce grays outside the defined neu
 
 ```
 --rg-red:       #BF1E2E   /* Redfearn Group brand red, identity layer anchor */
---rg-red-light: #EC7985   /* Dark-surface-safe red, Product layer accent. Raw red is
-                             2.88:1 on the dark card and fails body text; this is the
-                             same 354deg hue at 6.40:1, and sits dE 13.8 from the
-                             overdue status red so links never read as alerts. */
 --rg-blue:   #0A1128   /* Deep steel blue-black, primary text, dark surfaces (renamed from --rg-ink) */
 --rg-cream:  #F7F4EF   /* Cream/off-white, main light background */
 --rg-green:  #1A6635   /* Forest green, positive/on-track status signal */
@@ -112,11 +108,11 @@ Three layers govern how colors are applied. Keep them distinct. Each is a CSS cl
 
 **Content Layer** (`.content-layer`. Anchor: `--rg-ember` to `--rg-gape`): used within portfolio pieces, case studies, reports, and project-specific work. Carries warmth and craft without competing with the brand red. Gape yellow is reserved for the dark-mode hero log element specifically.
 
-**Product Layer** (`.app-layer`. Anchor: `--rg-red-light` on dark surfaces): real working applications published as GitHub projects, such as garage-log and home-log. These are portfolio evidence that Brady ships working software, so they carry the brand mark and brand red, but on dark surfaces to read as tools rather than marketing pages. Set the class on `<html>`.
+**Product Layer** (`.app-layer`, dark surfaces): real working applications published as GitHub projects, such as garage-log and home-log. These are portfolio evidence that Brady ships working software, so they carry the brand mark and brand red, but on dark surfaces to read as tools rather than marketing pages. Set the class on `<html>`.
 
-Never mix layers within the same accent role on the same page. A card on the main portfolio uses `--rg-red` for hover borders; the same card pattern inside a case study uses `--rg-ember`; inside an application it uses `--rg-red-light`. The component does not change, the layer scope does.
+Never mix layers within the same accent role on the same page. A card on the main portfolio uses `--rg-red` for hover borders; the same card pattern inside a case study uses `--rg-ember`; inside an application, text and links use `--rg-cream` and red moves to the underline, border, or fill. The component does not change, the layer scope does.
 
-**Why Product uses red rather than ember:** applications represent Brady directly, the same as site chrome does, so they belong to the identity family. Ember would make an app read as a case study. Raw `--rg-red` cannot be used on dark because it fails contrast, hence `--rg-red-light`.
+**Why Product still reads as red, without a red accent token:** raw `--rg-red` is 2.88:1 on the dark card and fails contrast for text, so text and links on `.app-layer` use cream, same as body copy, and red carries the brand instead through underlines, borders, tints, and the gradient bar, which are decorative and not contrast-bound. Do not invent a lightened red to force red text onto dark. The palette is the closed set defined here and in `logo-system.md`'s five schemes; off-system colors are not introduced without Brady's explicit sign-off, confirmed 2026-07-24 after an earlier pass added one without asking.
 
 ---
 
@@ -232,24 +228,24 @@ mono. Treat 12px as the one number, not a range.
 - Background: `--rg-blue`
 - Surface (cards): `#0F1830` (blue tinted slightly warm)
 - Body text: `--rg-cream`
-- Primary accent: `--rg-red-light` for text, links, and anything that must be read. `--rg-red` is fine for borders, tint fills, gradient bars, and dots, which are decorative.
+- Text and links: `--rg-cream`, same as body copy. Do not color links red on dark, raw `--rg-red` is 2.88:1 on the card and fails contrast.
+- Red carries the brand through decoration instead: link underlines, card borders on hover, the gradient bar, tint fills, dots. All decorative uses are not contrast-bound, so raw `--rg-red` is fine there.
 - Hero log element: `--rg-gape` exclusively
 - Muted text: `#9AA1AE`, or `rgba(247,244,239,0.55)` cream at reduced opacity
-- Borders: `rgba(236,121,133,0.10–0.28)` red ghost, or `rgba(247,244,239,0.12)` cream ghost
+- Borders: `rgba(191,30,46,0.12–0.35)` red ghost, or `rgba(247,244,239,0.12)` cream ghost
 
 **Verified against the card surface `#0F1830`**, which is the binding constraint because it is lighter than the page background. Measured 2026-07-24, superseding the earlier "good-faith, not independently verified" note:
 
 | Token | Ratio on card | Level |
 | :--- | ---: | :--- |
-| cream body text | 16.04:1 | AAA |
+| cream body text / links | 16.04:1 | AAA |
 | muted text `#9AA1AE` | 6.77:1 | AA |
-| accent `--rg-red-light` | 6.40:1 | AA |
 | status overdue `#FF6B7A` | 6.40:1 | AA |
 | status due-soon `#F0A57A` | 8.69:1 | AAA |
 | status ok `#4CAF6E` | 6.42:1 | AA |
 | `--rg-gape` (log only) | 11.64:1 | AAA |
-| raw `--rg-red` | 2.88:1 | **fails body text** |
-| raw `--rg-ember` | 3.98:1 | **fails body text** |
+| raw `--rg-red` (decorative only) | 2.88:1 | fails as text, fine as a border/underline/fill |
+| raw `--rg-ember` (decorative only) | 3.98:1 | fails as text, fine as a border/underline/fill |
 
 **Product-layer apps are dark unconditionally, not through `prefers-color-scheme`.** The dark treatment is the product identity for these tools, not an echo of an OS setting. Do not add a light-mode branch to an app.
 

@@ -32,15 +32,14 @@ Every Product layer value is measured against the card surface `#0F1830`, which 
 
 | Token | Ratio on card | Level |
 | :--- | ---: | :--- |
-| cream body text | 16.04:1 | AAA |
+| cream body text / links | 16.04:1 | AAA |
 | muted text | 6.77:1 | AA |
-| accent link (`--rg-red-light`) | 6.40:1 | AA |
 | status overdue | 6.40:1 | AA |
 | status due-soon | 8.69:1 | AAA |
 | status ok | 6.42:1 | AA |
 | gape yellow (ambient log only) | 11.64:1 | AAA |
 
-Raw `--rg-red` is 2.88:1 on that surface and raw `--rg-ember` is 3.98:1. Both fail body text on dark, which is why `--rg-red-light` exists. It also sits dE 13.8 from `--status-overdue-fg`, far enough that an accent link never reads as an overdue badge.
+Raw `--rg-red` is 2.88:1 on that surface and raw `--rg-ember` is 3.98:1, both failing body text on dark. Rather than invent a lightened red, the Product layer keeps text and links cream and moves red onto decoration instead: link underlines, borders, tints, the gradient bar. Those are not contrast-bound. The palette stays the closed set Brady already reviewed in `logo-variant-review`, no off-system color introduced without his sign-off.
 
 ## Changing a value
 
