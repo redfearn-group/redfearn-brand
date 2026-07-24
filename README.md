@@ -48,6 +48,16 @@ Raw `--rg-red` is 2.88:1 on that surface and raw `--rg-ember` is 3.98:1. Both fa
 2. Run `node sync.mjs` to push it into the sibling repos on disk.
 3. Commit and push this repo **first**, then each consumer. The drift check pulls from `main` here, so consumers will fail until this repo is updated.
 
-## Related
+## The skill
 
-Application rules, voice, logo system, and implementation pitfalls live in the `redfearn-group-style` skill, which points at this file rather than restating values.
+`skill/` holds the `redfearn-group-style` skill: layer semantics, voice rules, the logo system, WCAG pairings, and implementation pitfalls. It points at `brand.css` rather than restating values, so the rules and the values version together in one repo.
+
+It is kept here because the copy Claude loads at runtime lives in a session-scoped plugin cache that does not survive. This is the durable source. To update the active copy, replace the contents of the plugin's `skills/redfearn-group-style/` directory with `skill/`, or drop it into `~/.claude/skills/`.
+
+## Adding a new property
+
+1. Vendor `brand.css` into it, and add the path to `CONSUMERS` in `sync.mjs`.
+2. Copy `.github/workflows/brand-drift.yml` from an existing consumer and fix the path.
+3. Load `brand.css` before the property's own stylesheet.
+4. Pick a layer. Applications set `class="app-layer"` on `<html>`.
+5. Use `rg-mark.svg` as the favicon and in the header. Never a framework default.
