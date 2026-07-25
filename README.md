@@ -53,6 +53,15 @@ Raw `--rg-red` is 2.88:1 on that surface and raw `--rg-ember` is 3.98:1, both fa
 
 It is kept here because the copy Claude loads at runtime lives in a session-scoped plugin cache that does not survive. This is the durable source. To update the active copy, replace the contents of the plugin's `skills/redfearn-group-style/` directory with `skill/`, or drop it into `~/.claude/skills/`.
 
+### Exporting it
+
+```sh
+node package-skill.mjs            # dated ZIP written to the parent folder
+node package-skill.mjs 2026-07-24 # rebuild a specific dated release
+```
+
+The archive nests everything under `redfearn-group-style/`, so unzipping gives a folder ready to drop into a skills location. Attach it to a [GitHub release](https://github.com/redfearn-group/redfearn-brand/releases) rather than committing it, so the repo does not accumulate binaries duplicating what `skill/` already tracks. ZIPs are gitignored for that reason.
+
 ## Adding a new property
 
 1. Vendor `brand.css` into it, and add the path to `CONSUMERS` in `sync.mjs`.
