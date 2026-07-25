@@ -16,6 +16,10 @@ Builds stay hermetic with no network dependency and no registry, which keeps eve
 | [garage-log](https://github.com/redfearn-group/garage-log) | `src/styles/brand.css` | Product |
 | [home-log](https://github.com/redfearn-group/home-log) | `src/styles/brand.css` | Product |
 
+`workspace/CLAUDE.md` is also synced out, to `C:\Claude Code\CLAUDE.md`. Claude Code loads that path automatically, but the workspace folder is not a git repo, so this is the only place the file survives. Edit it here, not there.
+
+Shared files are pinned to LF via `.gitattributes` in every repo. Without that, a Windows checkout rewrites them with CRLF and the drift check reports every line as changed. `sync.mjs` also compares on normalized content as a backstop.
+
 ## The three layers
 
 Each layer sets the accent role. Never mix two layers in the same accent role on one page.
