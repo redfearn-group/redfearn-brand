@@ -447,6 +447,27 @@ a local clone's working tree, which can have uncommitted or stale changes)
 before assuming this doc describes what's actually live — this doc is
 updated as changes land, not generated from the repo automatically.
 
+**App copies — canonical source: same master exports repo as above, `wide/`
+and `lockup/` folders, `dark` scheme.** garage-log and home-log
+(`redfearn-group/garage-log`, `redfearn-group/home-log`) each vendor two
+files straight from the master exports into their own `public/`:
+`redfearn-group-wide-dark-final.svg` (renamed `logo-wide-dark.svg` on disk)
+in the header at `305x50` display size, and
+`redfearn-group-lockup-dark-final.svg` (renamed `logo-lockup-dark.svg`) in
+the footer at `250x58`, both worked examples in §5's minimum-size table.
+Both apps use the opaque Red and Cream scheme for the same reason the
+site's footer does: it is self-contained on any backdrop, appropriate on
+the unconditionally-dark Product-layer surface these apps render on.
+`rg-mark.svg` (icon-avatar-safe, Red and Cream) remains the favicon in both
+apps; it is not also the header mark. This was a live correction, both
+apps originally shipped a bare `rg-mark.svg` plus plain text in the header
+with no footer lockup at all, caught and fixed 2026-07-25 (see the
+workspace-level `redfearn-group-style` skill's Deliverable-Specific Notes
+for the full requirement list this produced). Treat this pairing, wide
+lockup in the header, lockup in the footer, both `dark` scheme, both
+sized per §5, as the standard for any future GitHub project repo, not
+something to re-derive per property.
+
 When exporting a new PNG from any SVG here, render at the target resolution
 directly from the vector source (or at minimum 4x the target display size
 and downscale), never upscale a small raster, to avoid visible aliasing on
