@@ -79,15 +79,18 @@ Eight semantic callout variants. Each uses a 4px left accent bar plus an ~8% tin
 .co-quote::before    { background: var(--rg-tawny); }
 .co-quote .lbl       { color: var(--rg-blue); }
 
-/* 6. WARNING, risks/caveats. Yellow bar, ember label (yellow fails as text) */
+/* 6. WARNING, risks/caveats. Yellow bar (yellow fails as text); label is
+   blue, not ember, since ember also fails as text at this size (~3.8:1,
+   confirmed 2026-07-26, same issue tag-ember had). */
 .co-warning   { background: var(--tint-yellow); }
 .co-warning::before  { background: var(--rg-gape); }
-.co-warning .lbl     { color: var(--rg-ember); }
+.co-warning .lbl     { color: var(--rg-blue); }
 
-/* 7. CAUTION, do-not-proceed, one level below Alert */
+/* 7. CAUTION, do-not-proceed, one level below Alert. Ember bar, blue label
+   for the same reason as WARNING above. */
 .co-caution   { background: var(--tint-ember); }
 .co-caution::before  { background: var(--rg-ember); }
-.co-caution .lbl     { color: var(--rg-ember); }
+.co-caution .lbl     { color: var(--rg-blue); }
 
 /* 8. ALERT, most severe, already failing */
 .co-alert     { background: var(--tint-red); }
@@ -100,8 +103,19 @@ Eight semantic callout variants. Each uses a 4px left accent bar plus an ~8% tin
 ```css
 .sc { display: inline-block; padding: 0.18em 0.6em; border-radius: 3px; font-weight: 700; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; }
 .sc-green  { background: var(--tint-green); color: var(--rg-green); }  /* ON TRACK, 7.2:1 AAA */
-.sc-tawny  { background: var(--tint-tawny); color: var(--rg-tawny); } /* AT RISK */
-.sc-ember  { background: var(--tint-ember); color: var(--rg-ember); } /* BLOCKED */
+.sc-tawny  { background: var(--tint-tawny); color: var(--rg-tawny); } /* AT RISK. Tawny-as-text here is UNVERIFIED and likely fails AA
+   (~2.9:1 estimated, worse than ember's ~3.8:1 before its fix above);
+   tag-tawny on the site has the same open question. Not yet fixed
+   pending Brady's sign-off, same as tag-ember required. */
+/* BLOCKED: ember-as-text fails at this size (~3.8:1), same issue tag-ember
+   had. Ember moves to a 2px left edge; label text is blue. */
+.sc-ember {
+  position: relative;
+  padding-left: 0.85em;
+  background: var(--tint-ember);
+  color: var(--rg-blue);
+}
+.sc-ember::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--rg-ember); border-radius: 3px 0 0 3px; }
 .sc-red    { background: var(--tint-red);   color: var(--rg-red);   } /* CRITICAL, 6.1:1 AA */
 ```
 
