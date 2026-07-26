@@ -89,7 +89,7 @@ Pre-verified pairs. Choose from this list for text. Don't eyeball new combinatio
 | RG Red on cream (body) | `#BF1E2E` | `#F7F4EF` | ~6.1:1 | **AA** ✓ body text |
 | Cream on RG Red (buttons) | `#F7F4EF` | `#BF1E2E` | ~6.1:1 | **AA** ✓ button text |
 | Body on tawny panel | `#0A1128` | `#D97443` | ~5.2:1 | **AA** |
-| Cinnamon/ember on cream | `#C2592A` | `#F7F4EF` | ~3.8:1 | UI / Large only |
+| Cinnamon/ember on cream | `#C2592A` | `#F7F4EF` | ~3.8:1 | UI / Large only, never as tag/label text (see `.tag-ember` below) |
 | RG Red on dark navy blue | `#BF1E2E` | `#0A1128` | ~3.3:1 | UI / Large only |
 | Ash (muted label) on cream | `#676E7C` | `#F7F4EF` | ~4.67:1 | **AA** |
 
@@ -393,7 +393,25 @@ Full specification, the do's and don'ts, minimum sizes, the current scheme table
 .tag-green  { color: var(--status-ok-fg);       background: var(--status-ok-bg); }
 .tag-tawny  { color: var(--status-due-soon-fg); background: var(--status-due-soon-bg); }
 .tag-neutral{ color: var(--status-never-fg);    background: var(--status-never-bg); }
-.tag-ember  { color: var(--rg-ember);           background: rgba(194,89,42,0.08); }
+/* tag-ember does NOT set ember as the text color. Ember-as-text measures
+   ~3.8:1 on cream and ~3.98:1 on the app-layer card, both below the 4.5:1
+   floor at this size, confirmed as a live failure on the frameworks/
+   case-study tags 2026-07-26. Ember instead renders as a 3px decorative
+   left edge, and the label text uses the surface's safe neutral
+   (--rg-blue light, --rg-cream dark), the same brand-on-decoration move
+   used for dark-mode links elsewhere in this system. Brady reviewed this
+   against plain ember text and picked the accent-edge version as more
+   consistent with an executive-level site; don't revert to ember text
+   without asking again. */
+.tag-ember {
+  position: relative;
+  padding-left: 0.95rem;
+  color: var(--rg-blue);
+  background: rgba(194,89,42,0.08);
+}
+.tag-ember::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--rg-ember); border-radius: 2px 0 0 2px; }
+.app-layer .tag-ember { color: var(--rg-cream); background: rgba(217,116,67,0.12); }
+.app-layer .tag-ember::before { background: var(--rg-tawny); }
 ```
 
 ---
