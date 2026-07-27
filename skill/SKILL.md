@@ -389,7 +389,7 @@ Full specification, the do's and don'ts, minimum sizes, the current scheme table
    automatically. Font size is 0.75rem, not 0.6rem: an earlier version of
    this snippet said 0.6rem, which is 9.6px and violates the 12px floor in
    Minimum Text Size above. The floor wins. */
-.tag { padding: 0.22rem 0.55rem; border-radius: 2px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.06em; }
+.tag { padding: 0.22rem 0.55rem; border-radius: 2px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
 .tag-red    { color: var(--status-overdue-fg);  background: var(--status-overdue-bg); }
 .tag-green  { color: var(--status-ok-fg);       background: var(--status-ok-bg); }
 .tag-neutral{ color: var(--status-never-fg);    background: var(--status-never-bg); }
