@@ -103,10 +103,15 @@ Eight semantic callout variants. Each uses a 4px left accent bar plus an ~8% tin
 ```css
 .sc { display: inline-block; padding: 0.18em 0.6em; border-radius: 3px; font-weight: 700; font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; }
 .sc-green  { background: var(--tint-green); color: var(--rg-green); }  /* ON TRACK, 7.2:1 AAA */
-.sc-tawny  { background: var(--tint-tawny); color: var(--rg-tawny); } /* AT RISK. Tawny-as-text here is UNVERIFIED and likely fails AA
-   (~2.9:1 estimated, worse than ember's ~3.8:1 before its fix above);
-   tag-tawny on the site has the same open question. Not yet fixed
-   pending Brady's sign-off, same as tag-ember required. */
+/* AT RISK: tawny-as-text measured ~2.9-3.2:1, worse than ember's ~3.8:1,
+   confirmed 2026-07-27. Same accent-edge fix as sc-ember and tag-tawny. */
+.sc-tawny {
+  position: relative;
+  padding-left: 0.85em;
+  background: var(--tint-tawny);
+  color: var(--rg-blue);
+}
+.sc-tawny::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--rg-tawny); border-radius: 3px 0 0 3px; }
 /* BLOCKED: ember-as-text fails at this size (~3.8:1), same issue tag-ember
    had. Ember moves to a 2px left edge; label text is blue. */
 .sc-ember {

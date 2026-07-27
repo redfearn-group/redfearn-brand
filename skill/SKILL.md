@@ -88,7 +88,8 @@ Pre-verified pairs. Choose from this list for text. Don't eyeball new combinatio
 | Green status text | `#1A6635` | `#F7F4EF` | ~7.2:1 | **AAA** |
 | RG Red on cream (body) | `#BF1E2E` | `#F7F4EF` | ~6.1:1 | **AA** ✓ body text |
 | Cream on RG Red (buttons) | `#F7F4EF` | `#BF1E2E` | ~6.1:1 | **AA** ✓ button text |
-| Body on tawny panel | `#0A1128` | `#D97443` | ~5.2:1 | **AA** |
+| Body on tawny panel | `#0A1128` | `#D97443` | ~5.2:1 | **AA** — tawny as a background with dark text on it |
+| Tawny on cream (as text) | `#D97443` | `#F7F4EF` | ~2.9–3.2:1 | Fails even large text; never as tag/label text (see `.tag-tawny` below) |
 | Cinnamon/ember on cream | `#C2592A` | `#F7F4EF` | ~3.8:1 | UI / Large only, never as tag/label text (see `.tag-ember` below) |
 | RG Red on dark navy blue | `#BF1E2E` | `#0A1128` | ~3.3:1 | UI / Large only |
 | Ash (muted label) on cream | `#676E7C` | `#F7F4EF` | ~4.67:1 | **AA** |
@@ -391,8 +392,24 @@ Full specification, the do's and don'ts, minimum sizes, the current scheme table
 .tag { padding: 0.22rem 0.55rem; border-radius: 2px; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.06em; }
 .tag-red    { color: var(--status-overdue-fg);  background: var(--status-overdue-bg); }
 .tag-green  { color: var(--status-ok-fg);       background: var(--status-ok-bg); }
-.tag-tawny  { color: var(--status-due-soon-fg); background: var(--status-due-soon-bg); }
 .tag-neutral{ color: var(--status-never-fg);    background: var(--status-never-bg); }
+/* tag-tawny's default (light) value of --status-due-soon-fg is --rg-tawny,
+   which measures ~2.9-3.2:1 as text, worse than ember's ~3.8:1 and
+   confirmed 2026-07-27, same root cause: copy-pasted across red/green/
+   tawny/ember without checking each hue's own contrast as text. The
+   .app-layer override already corrects to #F0A57A (8.69:1 AAA) for real
+   due-soon status badges in garage-log/home-log, untouched here. The
+   default gets the same accent-edge move as tag-ember, and now matches
+   co-quote, which has used exactly this pattern since day one. */
+.tag-tawny {
+  position: relative;
+  padding-left: 0.95rem;
+  color: var(--rg-blue);
+  background: var(--status-due-soon-bg);
+}
+.tag-tawny::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--rg-tawny); border-radius: 2px 0 0 2px; }
+.app-layer .tag-tawny { padding-left: 0.55rem; color: var(--status-due-soon-fg); background: var(--status-due-soon-bg); }
+.app-layer .tag-tawny::before { content: none; }
 /* tag-ember does NOT set ember as the text color. Ember-as-text measures
    ~3.8:1 on cream and ~3.98:1 on the app-layer card, both below the 4.5:1
    floor at this size, confirmed as a live failure on the frameworks/
