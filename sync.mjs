@@ -19,6 +19,7 @@ const FILES = [
   ["brand.css", "redfearn-group.github.io/src/css/brand.css"],
   ["brand.css", "garage-log/src/styles/brand.css"],
   ["brand.css", "home-log/src/styles/brand.css"],
+  ["brand.css", "canyon-breeze-manor-hoa/src/styles/brand.css"],
   // Auto-loaded by Claude Code from the workspace root, which is not a git
   // repo, so this repo is where it actually survives.
   ["workspace/CLAUDE.md", "CLAUDE.md"],
