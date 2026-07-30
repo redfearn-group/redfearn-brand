@@ -97,5 +97,4 @@ All Brady-facing copy, including READMEs, repo descriptions, and rendered YAML c
 ## Known stale references
 
 - `garage-log/data/**.yaml` still carries roughly 1,050 prose em-dashes, which the voice rules prohibit. home-log's data and both repos' UI strings were cleaned on 2026-07-24; garage-log's data files were deliberately left, since each instance is unique prose inside real maintenance records and a bulk rewrite risks corrupting them. The `" — "` schedule separator is exempt.
-- `redfearn-group.github.io/src/css/main.css` still defines its own `.eyebrow`, `.section-label`, `.live-badge`, `.btn`, `.tag`, and callout rules, which now also live in `brand.css`. They win by load order so nothing renders differently, but deduplicating them needs visual verification.
 - The site repo now has a single branch, `main`. Three merged feature branches were deleted on 2026-07-24 (`content-buildout-2026-07` at `999bbb5`, `voice-rewrite-2026-07` at `3756c7f`, `linkedin-alignment-2026-07` at `8989649`). Restore any of them with `git push origin <sha>:refs/heads/<name>` if a reference is ever needed.
