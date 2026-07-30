@@ -39,7 +39,11 @@ if (!existsSync(SRC)) {
    what was really an over-length description). Catch it here instead of
    finding out after a round trip through the uploader. */
 function validateFrontmatter() {
-  const content = readFileSync(path.join(SRC, "SKILL.md"), "utf-8");
+  // Normalize CRLF first: a Windows checkout (git core.autocrlf) rewrites
+  // this file with \r\n, which silently breaks a \n-only regex instead of
+  // erroring clearly, exactly the kind of missing-context failure this
+  // validation exists to avoid in the first place.
+  const content = readFileSync(path.join(SRC, "SKILL.md"), "utf-8").replace(/\r\n/g, "\n");
   const match = content.match(/^---\n([\s\S]*?)\n---/);
   if (!match) {
     console.error("SKILL.md has no YAML frontmatter block.");
