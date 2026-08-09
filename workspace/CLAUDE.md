@@ -35,7 +35,7 @@ npm run og               # regenerate OG card images
 npm run new-post         # scaffold an Insights post
 
 # redfearn-brand
-node sync.mjs            # copy brand.css into every consumer on disk
+node sync.mjs            # copy brand.css and kit/ into every consumer on disk
 node sync.mjs --check    # report drift without writing; exits 1 if any copy differs
 ```
 
@@ -66,9 +66,28 @@ Schedule item `name` fields carry a long sourcing citation after `" — "`. `spl
 
 ### Shared brand system
 
-`brand.css` lives in `redfearn-brand` and is **vendored** into each property (`src/css/brand.css` for the site, `src/styles/brand.css` for the apps). A `brand-drift.yml` GitHub Action in each consumer fetches canonical from `main` and fails the build if the copy differs.
+Two things are authored in `redfearn-brand` and **vendored** outward by `sync.mjs`:
 
-To change a value: edit `redfearn-brand/brand.css`, run `node sync.mjs`, **push `redfearn-brand` first**, then the consumers. Pushing a consumer first fails its drift check. Never edit a vendored copy.
+- `brand.css`, into every property (`src/css/brand.css` for the site, `src/styles/brand.css` for the apps).
+- `kit/*.ts`, into `src/lib/kit/` in the four Astro apps only. The modules use `import.meta.env` and js-yaml, so they mean nothing to the Eleventy site, which takes `brand.css` and nothing else.
+
+A `vendor-drift.yml` GitHub Action in each consumer fetches canonical from `main` and fails the build if any vendored copy differs.
+
+To change a value: edit it in `redfearn-brand`, run `node sync.mjs`, **push `redfearn-brand` first**, then the consumers. Pushing a consumer first fails its drift check, and for the kit it fails harder: the check fetches by URL, so a kit file that does not exist on `main` yet is a 404 rather than a diff. Never edit a vendored copy.
+
+### The kit
+
+Shared, app-agnostic helpers. Deliberately small: about 100 lines. Anything that needs to know what a vehicle or a meeting is belongs in the app, not here.
+
+| Module | Exports |
+| :--- | :--- |
+| `kit/base.ts` | `withBase(p)`, prefixing an internal link with the Pages base path |
+| `kit/date.ts` | `formatDate`, `parseDate`, `daysBetween`, `today`. All DD MMM YYYY, all regex-parsed |
+| `kit/yaml.ts` | `DATA_DIR`, `readYaml(path, fallback)`, `readData(relPath, fallback)` |
+
+**Dates never travel through `new Date(isoString)`.** That parses a bare `YYYY-MM-DD` as UTC midnight and renders it in local time, printing the previous day anywhere west of Greenwich. Every date in these repos is a calendar date with no time component. The kit parses by regex for exactly this reason, and a page that reaches for `toLocaleDateString` is reintroducing the bug.
+
+The `.mjs` files under `scripts/` in each app are run directly by node and are **not** part of the Astro build, so they cannot import the kit's TypeScript. Duplication between a script and the kit is a known limitation, not an oversight.
 
 Three layer scopes set the accent role. `:root` is Identity (brand red, site chrome), `.content-layer` is Content (ember to gape, case studies), `.app-layer` is Product (dark surfaces, cream text, red as decoration only). The apps set `class="app-layer"` on `<html>` and are dark unconditionally, not via `prefers-color-scheme`.
 

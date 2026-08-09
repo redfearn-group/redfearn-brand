@@ -3,29 +3,60 @@
    Pass --check to report drift without writing anything, exit 1 if any.
 
    Everything below is authored HERE and copied outward. Never edit a
-   destination copy: the next sync silently overwrites it, and for
-   brand.css a CI job in each consumer fails the build first. */
+   destination copy: the next sync silently overwrites it, and a CI job in
+   each consumer fails the build first. */
 
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const WORKSPACE = path.resolve(ROOT, "..");
 
-/* source, relative to this repo → destination, relative to the workspace
-   folder that holds all the sibling repos. */
-const FILES = [
-  ["brand.css", "redfearn-group.github.io/src/css/brand.css"],
-  ["brand.css", "garage-log/src/styles/brand.css"],
-  ["brand.css", "home-log/src/styles/brand.css"],
-  ["brand.css", "canyon-breeze-manor-hoa/src/styles/brand.css"],
-  // Private board tracker. Never deployed, but it renders locally and runs
-  // the same drift check, so it has to receive brand.css like any consumer.
-  ["brand.css", "canyon-breeze-manor-hoa-private/src/styles/brand.css"],
-  // Auto-loaded by Claude Code from the workspace root, which is not a git
-  // repo, so this repo is where it actually survives.
-  ["workspace/CLAUDE.md", "CLAUDE.md"],
+/* Every .ts file in kit/ is shared. Enumerated from disk rather than listed
+   by hand so adding a module is one file, not one file plus four edits. */
+const KIT_FILES = readdirSync(path.join(ROOT, "kit"))
+  .filter((f) => f.endsWith(".ts"))
+  .sort();
+
+/* Where each consumer wants the kit. Astro apps only: the modules import
+   `import.meta.env` and js-yaml, so they are meaningless to the Eleventy
+   site, which is why it appears below with brand.css and nothing else. */
+const kitInto = (dir) =>
+  KIT_FILES.map((f) => [`kit/${f}`, `${dir}/${f}`]);
+
+/* Per consumer, so it is obvious at a glance what any one repo receives.
+   Paths are relative to the workspace folder holding the sibling repos. */
+const CONSUMERS = [
+  {
+    repo: "redfearn-group.github.io",
+    note: "Eleventy. Brand tokens only, no kit.",
+    files: [["brand.css", "src/css/brand.css"]],
+  },
+  {
+    repo: "garage-log",
+    files: [["brand.css", "src/styles/brand.css"], ...kitInto("src/lib/kit")],
+  },
+  {
+    repo: "home-log",
+    files: [["brand.css", "src/styles/brand.css"], ...kitInto("src/lib/kit")],
+  },
+  {
+    repo: "canyon-breeze-manor-hoa",
+    files: [["brand.css", "src/styles/brand.css"], ...kitInto("src/lib/kit")],
+  },
+  {
+    repo: "canyon-breeze-manor-hoa-private",
+    note: "Private board tracker. Never deployed, but renders locally and runs the same drift check.",
+    files: [["brand.css", "src/styles/brand.css"], ...kitInto("src/lib/kit")],
+  },
+  {
+    // The workspace root itself, not a repo. Claude Code auto-loads
+    // CLAUDE.md from there, but the root is not version controlled, so this
+    // repo holds the copy that actually survives.
+    repo: ".",
+    files: [["workspace/CLAUDE.md", "CLAUDE.md"]],
+  },
 ];
 
 const checkOnly = process.argv.includes("--check");
@@ -38,32 +69,49 @@ let missing = 0;
    backstop for a copy that predates that or was written by hand. */
 const normalize = (s) => s.replace(/\r\n/g, "\n");
 
-for (const [srcRel, destRel] of FILES) {
-  const source = readFileSync(path.join(ROOT, srcRel), "utf-8");
-  const dest = path.join(WORKSPACE, destRel);
+for (const consumer of CONSUMERS) {
+  const repoDir = path.join(WORKSPACE, consumer.repo);
 
-  // A destination inside a repo that is not cloned here is skipped rather
-  // than created, so syncing never scatters files into empty folders.
-  const destDir = path.dirname(dest);
-  if (!existsSync(destDir)) {
-    console.log(`SKIP   ${destRel} (${path.relative(WORKSPACE, destDir)} not on disk)`);
-    missing++;
+  // A repo that is not cloned here is skipped rather than created, so
+  // syncing never scatters files into empty folders.
+  if (!existsSync(repoDir)) {
+    console.log(`SKIP   ${consumer.repo} (not on disk)`);
+    missing += consumer.files.length;
     continue;
   }
 
-  const current = existsSync(dest) ? readFileSync(dest, "utf-8") : null;
-  if (current !== null && normalize(current) === normalize(source)) {
-    console.log(`OK     ${destRel}`);
-    continue;
-  }
+  for (const [srcRel, destRel] of consumer.files) {
+    const source = readFileSync(path.join(ROOT, srcRel), "utf-8");
+    const dest = path.join(repoDir, destRel);
+    const label = `${consumer.repo}/${destRel}`;
 
-  drifted++;
-  const why = current === null ? "(missing)" : "(differs)";
-  if (checkOnly) {
-    console.log(`DRIFT  ${destRel} ${why}`);
-  } else {
-    writeFileSync(dest, source);
-    console.log(`WROTE  ${destRel} ${current === null ? "(created)" : "(updated)"}`);
+    // Unlike the repo itself, a missing subdirectory IS created: kit/ is a
+    // new folder in every consumer and requiring a manual mkdir first would
+    // make the first sync fail for no useful reason.
+    const destDir = path.dirname(dest);
+    if (!existsSync(destDir)) {
+      if (checkOnly) {
+        console.log(`DRIFT  ${label} (directory missing)`);
+        drifted++;
+        continue;
+      }
+      mkdirSync(destDir, { recursive: true });
+    }
+
+    const current = existsSync(dest) ? readFileSync(dest, "utf-8") : null;
+    if (current !== null && normalize(current) === normalize(source)) {
+      console.log(`OK     ${label}`);
+      continue;
+    }
+
+    drifted++;
+    const why = current === null ? "(missing)" : "(differs)";
+    if (checkOnly) {
+      console.log(`DRIFT  ${label} ${why}`);
+    } else {
+      writeFileSync(dest, source);
+      console.log(`WROTE  ${label} ${current === null ? "(created)" : "(updated)"}`);
+    }
   }
 }
 
