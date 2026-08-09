@@ -2,7 +2,7 @@
 
 Canonical design tokens and shared CSS primitives for every Redfearn Group property.
 
-`brand.css` is the single source of truth. It is vendored into each consuming repo, and each repo's CI fails the build if its copy has drifted from this one.
+Two things are canonical here and vendored outward by `sync.mjs`: **`brand.css`**, the design tokens, and **`kit/*.ts`**, a small set of shared TypeScript helpers. Each consuming repo's CI fails the build if its copy has drifted from this one.
 
 ## Why vendored instead of a package
 
@@ -15,10 +15,35 @@ Builds stay hermetic with no network dependency and no registry, which keeps eve
 | [redfearn-group.github.io](https://github.com/redfearn-group/redfearn-group.github.io) | `src/css/brand.css` | Identity, plus Content on case studies |
 | [garage-log](https://github.com/redfearn-group/garage-log) | `src/styles/brand.css` | Product |
 | [home-log](https://github.com/redfearn-group/home-log) | `src/styles/brand.css` | Product |
+| [canyon-breeze-manor-hoa](https://github.com/redfearn-group/canyon-breeze-manor-hoa) | `src/styles/brand.css` | Product |
+| canyon-breeze-manor-hoa-private | `src/styles/brand.css` | Product |
+
+The four Astro apps also receive `kit/*.ts` at `src/lib/kit/`. The Eleventy site does not: the modules use `import.meta.env` and js-yaml and mean nothing in an Eleventy build.
 
 `workspace/CLAUDE.md` is also synced out, to `C:\Claude Code\CLAUDE.md`. Claude Code loads that path automatically, but the workspace folder is not a git repo, so this is the only place the file survives. Edit it here, not there.
 
 Shared files are pinned to LF via `.gitattributes` in every repo. Without that, a Windows checkout rewrites them with CRLF and the drift check reports every line as changed. `sync.mjs` also compares on normalized content as a backstop.
+
+## The kit
+
+Shared, app-agnostic helpers. Deliberately small, around 230 lines. Anything that needs to know what a vehicle or a meeting is belongs in the app, not here.
+
+| Module | Exports |
+| :--- | :--- |
+| `kit/base.ts` | `withBase(p)`, prefixing an internal link with the Pages base path |
+| `kit/date.ts` | `formatDate`, `formatMonth`, `parseDate`, `addMonths`, `daysBetween`, `today` |
+| `kit/yaml.ts` | `DATA_DIR`, `readYaml(path, fallback)`, `readData(relPath, fallback)` |
+| `kit/due.ts` | `dateDue({lastDone, intervalMonths, today, dueSoonDays})`, the date half of a due-status calculation |
+
+Two rules the kit exists to enforce:
+
+**Dates never travel through `new Date(isoString)`.** That parses a bare `YYYY-MM-DD` as UTC midnight and renders it in local time, printing the previous day west of Greenwich. Everything here parses by regex.
+
+**Never derive today from `new Date().toISOString().slice(0, 10)`.** That is UTC, so it returns tomorrow after 18:00 Mountain, and these sites build in GitHub Actions on UTC. Use `today()`.
+
+`npm test` runs 25 assertions over the kit. The kit ships bare relative imports because that is what Astro and Vite expect, so the runner copies `kit/` to a temp directory and rewrites the imports rather than changing what ships.
+
+The `.mjs` scripts in the consuming apps are run directly by node, outside the Astro build, so they **cannot** import this TypeScript. Each carries its own small `today()`. That duplication is a known limitation, not an oversight.
 
 ## The three layers
 
@@ -69,7 +94,7 @@ The archive nests everything under `redfearn-group-style/`, so unzipping gives a
 ## Adding a new property
 
 1. Vendor `brand.css` into it, and add the path to `CONSUMERS` in `sync.mjs`.
-2. Copy `.github/workflows/brand-drift.yml` from an existing consumer and fix the path.
+2. Copy `.github/workflows/vendor-drift.yml` from an existing consumer and fix the paths.
 3. Load `brand.css` before the property's own stylesheet.
 4. Pick a layer. Applications set `class="app-layer"` on `<html>`.
 5. Use `rg-mark.svg` as the favicon and in the header. Never a framework default.
