@@ -1,2 +1,9 @@
 node_modules/
+.DS_Store
+
+# skill packaging
+.package-tmp/
+*.zip
+
+# temp copy of kit/ with import extensions rewritten, made by `npm test`
 .kit-build/
