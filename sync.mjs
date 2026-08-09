@@ -20,6 +20,9 @@ const FILES = [
   ["brand.css", "garage-log/src/styles/brand.css"],
   ["brand.css", "home-log/src/styles/brand.css"],
   ["brand.css", "canyon-breeze-manor-hoa/src/styles/brand.css"],
+  // Private board tracker. Never deployed, but it renders locally and runs
+  // the same drift check, so it has to receive brand.css like any consumer.
+  ["brand.css", "canyon-breeze-manor-hoa-private/src/styles/brand.css"],
   // Auto-loaded by Claude Code from the workspace root, which is not a git
   // repo, so this repo is where it actually survives.
   ["workspace/CLAUDE.md", "CLAUDE.md"],
