@@ -18,17 +18,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `canyon-breeze-manor-hoa-private/` | same name (private) | The HOA board tracker. Meetings, minutes, contracts, vendors, expenses, watchlist. **Everything in `data/` is committed here, including `data/private/`.** Never deployed, no Pages site, must never be made public. |
 | `garage-log-private/` | same name (private) | Source documents backing garage-log: scans, invoices, VIN/PII-bearing paperwork. |
 | `logo-review-github/` | `logo-variant-review` (private) | Archive of every reviewed logo layout and color scheme. Deliberately has no Pages deploy; clone and open `index.html` locally. |
+| `bradsbarbershop/` | `redfearn-group/bradsbarbershop` | PUBLIC site for Brad's Barber Shop in Spanish Fork, at bradsbarbershop.com. Eleventy 3. Not a Redfearn Group property: it copies RG color values but does not vendor `brand.css` and is not in `sync.mjs`. See the section below. |
 | `garage-log-backup-pre-history-rewrite/` | none | Dead backup. Do not edit or push. |
 
 ## Commands
 
-Run these from inside the relevant repo, not from the workspace root. Each tracker's own CLAUDE.md lists its commands; these two repos have none of their own:
+Run these from inside the relevant repo, not from the workspace root. Each tracker's own CLAUDE.md lists its commands; these three repos have none of their own:
 
 ```sh
 # redfearn-group.github.io (Eleventy)
 npm run build            # to ./_site/
 npm run og               # regenerate OG card images
 npm run new-post         # scaffold an Insights post
+
+# bradsbarbershop (Eleventy)
+npm run build            # to ./_site/
 
 # redfearn-brand
 node sync.mjs            # copy brand.css and kit/ into every consumer on disk
@@ -37,7 +41,7 @@ node sync.mjs --check    # report drift without writing; exits 1 if any copy dif
 
 `npm run build` is the check that a change is valid in each app. The one real test suite is `npm test` in `redfearn-brand`, covering the shared kit.
 
-**Dev servers: use `preview_start` with the names in `.claude/launch.json`**, not `npm run dev` in a shell. Configured names are `redfearn-group-site` (8080), `garage-log` (4321), `home-log` (4323), `canyon-breeze-manor-hoa` (4325), `canyon-breeze-manor-hoa-private` (4327), `logo-review` (8081) and `logo-review-github` (8082). Note that `canyon-breeze-manor-hoa` serves the PUBLIC resident site and `canyon-breeze-manor-hoa-private` serves the board tracker, which is local preview only and never deployed. The Astro apps are served under their base path, so browse `http://localhost:4321/garage-log/`, not the bare origin.
+**Dev servers: use `preview_start` with the names in `.claude/launch.json`**, not `npm run dev` in a shell. Configured names are `redfearn-group-site` (8080), `garage-log` (4321), `home-log` (4323), `canyon-breeze-manor-hoa` (4325), `canyon-breeze-manor-hoa-private` (4327), `logo-review` (8081), `logo-review-github` (8082) and `bradsbarbershop` (8084). Note that `canyon-breeze-manor-hoa` serves the PUBLIC resident site and `canyon-breeze-manor-hoa-private` serves the board tracker, which is local preview only and never deployed. The Astro apps are served under their base path, so browse `http://localhost:4321/garage-log/`, not the bare origin.
 
 ## Architecture
 
@@ -76,6 +80,15 @@ The trackers' repos are public and git push access is the whole security model. 
 - Uploaded documents go to the private sibling repo under `documents/<slug>/<category>/`, as a blanket rule rather than a per-file judgment call. The public repo's `documents.yaml` stores only metadata, and the site shows a "stored in private repo" note with no download link.
 
 Every field on the interfaces in `src/lib/types.ts` renders publicly, since `data.ts` loads YAML straight through with no field-level filtering. A new field carrying account numbers or contract details belongs in `private.yaml`, not on the type.
+
+### bradsbarbershop
+
+A static site on GitHub Pages, live since 24 SEP 2026. PRs run a build check only; merging to `main` deploys. Working notes, verification scripts and logo sources live outside the repo in `C:\Users\redfe\.claude\bradsbarbershop\` (`NOTES.md` is the state file); the repo's own `SETUP.md`, `README.md` and `ACCESSIBILITY.md` cover setup, rollback and the WCAG 2.2 AA results.
+
+- `src/_data/shop.json` is the single source of truth for every fact on the site and for the HairSalon JSON-LD. Its hours and prices mirror the shop's Google Maps listing, which the owner maintains and Brady cannot edit. The old WordPress site and directories such as Yelp and Fresha are stale; never cross-check against them.
+- Copy rules from the owner: say nothing specific about individual barbers (no names, no bios), no award years, no Facebook or Yelp links, never describe the floor from the old black-and-white photo, and say each fact once per page.
+- Booking is phone and walk-in only. Do not add a booking widget or a form.
+- DNS is at WordPress.com, which also holds the domain. Never touch the MX record: it carries email forwarding for info@bradsbarbershop.com. Keep the `_github-pages-challenge-redfearn-group` TXT record, and keep `src/googledf7d43a2b326367a.html`, which verifies Google Search Console.
 
 ## Voice
 
