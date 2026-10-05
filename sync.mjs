@@ -59,6 +59,26 @@ const CONSUMERS = [
   },
 ];
 
+/* Private consumers live in consumers.local.json, which is gitignored. This
+   repo is public, and naming a private repo here would publish that it
+   exists. Same shape as above, except "kit" names the folder that receives
+   the kit instead of spelling out each file:
+   [{ "repo": "name", "note": "...", "css": "src/styles/brand.css", "kit": "src/lib/kit" }] */
+const LOCAL = path.join(ROOT, "consumers.local.json");
+if (existsSync(LOCAL)) {
+  for (const c of JSON.parse(readFileSync(LOCAL, "utf-8"))) {
+    CONSUMERS.push({
+      repo: c.repo,
+      note: c.note,
+      files: [
+        ...(c.css ? [["brand.css", c.css]] : []),
+        ...(c.kit ? kitInto(c.kit) : []),
+        ...(c.files || []),
+      ],
+    });
+  }
+}
+
 const checkOnly = process.argv.includes("--check");
 let drifted = 0;
 let missing = 0;

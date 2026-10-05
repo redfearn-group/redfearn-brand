@@ -7,3 +7,6 @@ node_modules/
 
 # temp copy of kit/ with import extensions rewritten, made by `npm test`
 .kit-build/
+
+# private consumers of sync.mjs; never committed (this repo is public)
+consumers.local.json
