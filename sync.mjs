@@ -46,6 +46,11 @@ const CONSUMERS = [
     files: [["brand.css", "src/styles/brand.css"], ...kitInto("src/lib/kit")],
   },
   {
+    repo: "civic-log",
+    note: "Civic monitor for Spanish Fork and Utah County. Astro, deployed at /civic-log/.",
+    files: [["brand.css", "src/styles/brand.css"], ...kitInto("src/lib/kit")],
+  },
+  {
     repo: "canyon-breeze-manor-hoa-private",
     note: "Private board tracker. Never deployed, but renders locally and runs the same drift check.",
     files: [["brand.css", "src/styles/brand.css"], ...kitInto("src/lib/kit")],
