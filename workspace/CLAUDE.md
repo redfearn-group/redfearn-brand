@@ -16,6 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `home-log/` | same name | Home maintenance tracker. Astro. Deployed at `/home-log/`. |
 | `canyon-breeze-manor-hoa/` | same name | PUBLIC resident site for Brady's HOA. Astro. Dues, insurance, documents, and the common-area irrigation map. Strict rules on what may be published: see its own CLAUDE.md. |
 | `canyon-breeze-manor-hoa-private/` | same name (private) | The HOA board tracker. Meetings, minutes, contracts, vendors, expenses, watchlist. **Everything in `data/` is committed here, including `data/private/`.** Never deployed, no Pages site, must never be made public. |
+| `civic-log/` | same name | PUBLIC civic monitor: short summaries of Spanish Fork and Utah County public meetings, with Attend flags, RSS, a calendar feed and issue alerts. Astro. Deployed at `/civic-log/`. Collected daily by Actions, summarized by the XPS task `civic-log-summarize`. See its own CLAUDE.md. |
 | `garage-log-private/` | same name (private) | Source documents backing garage-log: scans, invoices, VIN/PII-bearing paperwork. |
 | `logo-review-github/` | `logo-variant-review` (private) | Archive of every reviewed logo layout and color scheme. Deliberately has no Pages deploy; clone and open `index.html` locally. |
 | `bradsbarbershop/` | `redfearn-group/bradsbarbershop` | PUBLIC site for Brad's Barber Shop in Spanish Fork, at bradsbarbershop.com. Eleventy 3. Not a Redfearn Group property: it copies RG color values but does not vendor `brand.css` and is not in `sync.mjs`. See the section below. |
@@ -41,7 +42,7 @@ node sync.mjs --check    # report drift without writing; exits 1 if any copy dif
 
 `npm run build` is the check that a change is valid in each app. The one real test suite is `npm test` in `redfearn-brand`, covering the shared kit.
 
-**Dev servers: use `preview_start` with the names in `.claude/launch.json`**, not `npm run dev` in a shell. Configured names are `redfearn-group-site` (8080), `garage-log` (4321), `home-log` (4323), `canyon-breeze-manor-hoa` (4325), `canyon-breeze-manor-hoa-private` (4327), `logo-review` (8081), `logo-review-github` (8082) and `bradsbarbershop` (8084). Note that `canyon-breeze-manor-hoa` serves the PUBLIC resident site and `canyon-breeze-manor-hoa-private` serves the board tracker, which is local preview only and never deployed. The Astro apps are served under their base path, so browse `http://localhost:4321/garage-log/`, not the bare origin.
+**Dev servers: use `preview_start` with the names in `.claude/launch.json`**, not `npm run dev` in a shell. Configured names are `redfearn-group-site` (8080), `garage-log` (4321), `home-log` (4323), `canyon-breeze-manor-hoa` (4325), `canyon-breeze-manor-hoa-private` (4327), `logo-review` (8081), `logo-review-github` (8082), `bradsbarbershop` (8084) and `civic-log` (4331). Note that `canyon-breeze-manor-hoa` serves the PUBLIC resident site and `canyon-breeze-manor-hoa-private` serves the board tracker, which is local preview only and never deployed. The Astro apps are served under their base path, so browse `http://localhost:4321/garage-log/`, not the bare origin.
 
 ## Architecture
 
