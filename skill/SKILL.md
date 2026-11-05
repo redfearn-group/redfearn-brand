@@ -39,6 +39,12 @@ The visual system and the writing follow the same standard: confident, specific,
 
 - **No em-dashes.** Not a style preference, a hard rule. Restructure with a period, a comma, or a colon instead.
 - **No AI-tropes.** Avoid phrases like "in today's fast-paced landscape," "leverage," "unlock the potential," "delve into," "it's important to note," "navigate the complexities," "game-changer," "cutting-edge," "seamless," "robust solution." If a sentence could appear in a generic corporate AI-written blog post, rewrite it.
+- **No AI-slop sentence patterns.** Brady cuts these from every draft:
+  - Vague stakes phrases ("where a wrong answer has real consequences," "high-stakes work"). Name the actual place or outcome.
+  - Lines that announce what comes next ("I spent those years on two questions:," "The question was...").
+  - Lead-ins and tail clauses with no fact in them ("At a research and technology firm, I...," "..., and the rules above are one of them").
+  - Punchy standalone fragments and reversals ("It didn't."), aphoristic closers, slogan subheads. End on a plain statement; subheads are plain labels.
+  - Abstract summary where a concrete example belongs, and repeating a fact, opening or closer already used on the page or earlier in the same series.
 - **Short, direct sentences.** Cut hedging ("might potentially," "it could be argued"). State the position.
 - **Numbers over adjectives.** "75x adoption growth" beats "significant adoption growth" every time. If a claim can be backed by a real number, use the number, and only numbers that are actually verified true, never invented ones that sound plausible.
 - **Confident, not hedgy.** This is an executive's brand, not a cover letter. Say what's true plainly.
